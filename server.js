@@ -14,7 +14,9 @@ app.use((req, res, next) => {
 
 // Route to get the client's IP address
 app.get('/', (req, res) => {
-  const ip = req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  const forwardedIpsStr = req.headers['x-forwarded-for'] || '';
+  const forwardedIps = forwardedIpsStr.split(',').map(ip => ip.trim()).filter(ip => ip);
+  const ip = forwardedIps.length ? forwardedIps[0] : req.connection.remoteAddress;
   res.json({ ipAddress: ip });
 });
 
