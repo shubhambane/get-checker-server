@@ -1,11 +1,27 @@
 // server.js
 const express = require('express');
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
-app.get('/shubham', (req, res) => {
+// Enable trust proxy to get the real client IP
+app.set('trust proxy', true);
+
+// Middleware to log incoming requests
+app.use((req, res, next) => {
+  console.log(`Incoming request from IP: ${req.ip}`);
+  next();
+});
+
+// Route to get the client's IP address
+app.get('/', (req, res) => {
   const ip = req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-  res.send(`Your IP address is: ${ip}`);
+  res.json({ ipAddress: ip });
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: 'Something went wrong!' });
 });
 
 app.listen(port, () => {
