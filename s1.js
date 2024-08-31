@@ -49,7 +49,7 @@ app.get('/', async (req, res) => {
 
     // Attempt to access s2 via s1
     try {
-        const response = await axios.get('http://localhost:4000', {
+        const response = await axios.get('https://get-checker-server.onrender.com/', {
             headers: {
                 'x-forwarded-for': serverIp, // Forward s1's IP address
             },

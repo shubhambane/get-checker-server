@@ -21,7 +21,7 @@ function getServerIp() {
 const serverIp = getServerIp();
 
 // Define the allowed IP for access (s1's IP address)
-const allowedIp = '192.168.29.172'; // Replace with the actual IP of s1 when deployed
+const allowedIp = '10.220.81.111'; // Replace with the actual IP of s1 when deployed
 
 // Middleware to restrict access based on IP address
 app.use((req, res, next) => {
