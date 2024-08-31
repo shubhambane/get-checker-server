@@ -21,7 +21,7 @@ function getServerIp() {
 const serverIp = getServerIp();
 
 // Define the allowed IPs for access (multiple IPs can be added)
-const allowedIps = ['127.0.0.1', '192.168.29.172', serverIp]; // Example: localhost and s1's IP
+const allowedIps = ['10.220.215.126', serverIp]; // Example: localhost and s1's IP
 
 // Middleware to restrict access based on IP address
 app.use((req, res, next) => {
