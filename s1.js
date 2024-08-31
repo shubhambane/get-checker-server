@@ -55,6 +55,8 @@ app.get('/', async (req, res) => {
             ${response.data}
         `;
     } catch (error) {
+        console.error('Error accessing s2:', error.message); // Log the error message
+        console.error('Error details:', error); // Log the complete error object for debugging
         s2ViaS1Result = `<h2>Case 3: Accessing Server 2 via Server 1</h2><p>Error: ${error.message}</p>`;
     }
 

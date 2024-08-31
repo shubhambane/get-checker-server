@@ -21,7 +21,7 @@ function getServerIp() {
 const serverIp = getServerIp();
 
 // Define the allowed IPs for access (multiple IPs can be added)
-const allowedIps = ['10.220.215.126', serverIp]; // Example: localhost and s1's IP
+const allowedIps = ['127.0.0.1', serverIp]; // Example: localhost and s1's IP
 
 // Middleware to restrict access based on IP address
 app.use((req, res, next) => {
@@ -38,12 +38,18 @@ app.use((req, res, next) => {
 
 // Endpoint for s2 to return info
 app.get('/', (req, res) => {
+    const clientInfo = {
+        ip: req.socket.remoteAddress.replace('::ffff:', ''),
+        browser: req.headers['user-agent'],
+        platform: req.headers['sec-ch-ua-platform'] || 'Unknown',
+    };
+
     res.send(`
         <h1>Server 2 Response</h1>
         <p>Server IP: ${serverIp}</p>
-        <p>Client IP: ${req.socket.remoteAddress.replace('::ffff:', '')}</p>
-        <p>Browser: ${req.headers['user-agent']}</p>
-        <p>Platform: ${req.headers['sec-ch-ua-platform'] || 'Unknown'}</p>
+        <p>Client IP: ${clientInfo.ip}</p>
+        <p>Browser: ${clientInfo.browser}</p>
+        <p>Platform: ${clientInfo.platform}</p>
     `);
 });
 
