@@ -24,7 +24,7 @@ const serverIp = getServerIp();
 // Middleware to get client info
 app.use((req, res, next) => {
     req.clientInfo = {
-        ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress,
+        ip: req.socket.remoteAddress,
         browser: req.headers['user-agent'],
         platform: req.headers['sec-ch-ua-platform'] || 'Unknown',
     };
@@ -49,11 +49,7 @@ app.get('/', async (req, res) => {
 
     // Attempt to access s2 via s1
     try {
-        const response = await axios.get('https://get-checker-server.onrender.com/', {
-            headers: {
-                'x-forwarded-for': serverIp, // Forward s1's IP address
-            },
-        });
+        const response = await axios.get('http://localhost:4000');
         s2ViaS1Result = `
             <h2>Case 3: Accessing Server 2 via Server 1</h2>
             ${response.data}
