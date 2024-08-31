@@ -1,15 +1,32 @@
 // s1.js
 const express = require('express');
 const axios = require('axios');
+const os = require('os');
 const app = express();
 const port = 3000;
+
+// Function to get the server's IP address
+function getServerIp() {
+    const networkInterfaces = os.networkInterfaces();
+    for (const interfaceName in networkInterfaces) {
+        for (const iface of networkInterfaces[interfaceName]) {
+            if (iface.family === 'IPv4' && !iface.internal) {
+                return iface.address;
+            }
+        }
+    }
+    return 'Unknown IP';
+}
+
+// Server IP
+const serverIp = getServerIp();
 
 // Middleware to get client info
 app.use((req, res, next) => {
     req.clientInfo = {
         ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress,
         browser: req.headers['user-agent'],
-        platform: req.headers['sec-ch-ua-platform'] || 'Unknown'
+        platform: req.headers['sec-ch-ua-platform'] || 'Unknown',
     };
     next();
 });
@@ -24,7 +41,8 @@ app.get('/', async (req, res) => {
     // Populate s1 result
     s1Result = `
         <h2>Case 1: Accessing Server 1 Directly</h2>
-        <p>IP: ${req.clientInfo.ip}</p>
+        <p>Server IP: ${serverIp}</p>
+        <p>Client IP: ${req.clientInfo.ip}</p>
         <p>Browser: ${req.clientInfo.browser}</p>
         <p>Platform: ${req.clientInfo.platform}</p>
     `;
@@ -33,10 +51,7 @@ app.get('/', async (req, res) => {
     try {
         const response = await axios.get('http://localhost:4000', {
             headers: {
-                'x-forwarded-for': req.clientInfo.ip,
-                'user-agent': req.clientInfo.browser,
-                'sec-ch-ua-platform': req.clientInfo.platform,
-                'x-custom-header': 'access-via-s1', // Custom header to identify requests from s1
+                'x-forwarded-for': serverIp, // Forward s1's IP address
             },
         });
         s2ViaS1Result = `
